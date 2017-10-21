@@ -7,7 +7,7 @@
 
     <!-- dependencies -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script>
+    <script src="bower_components/underscore/underscore.js">
       // YOU DO NOT NEED TO EDIT THIS CODE
       if (!/(&|\?)username=/.test(window.location.search)) {
         var newSearch = window.location.search;
@@ -25,7 +25,11 @@
   <body>
     <div id="main">
       <h1>chatterbox</h1>
-      <!-- Your HTML goes here! -->
+      <select id="roomSelect">
+        <option selected value="all">All</option>
+<!--         <option value="beverages">Beverages</option>
+        <option value="snacks">Snacks</option> -->
+      </select>
     </div>
     <div id="chats"></div>
   </body>
