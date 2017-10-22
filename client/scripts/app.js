@@ -9,22 +9,32 @@
     // let context = this;
     // let messages = context.fetch().messages.data.results;
 
-    // for (var i = 0; i < messages.length; i++) {
+    // for (var i = 0; i < messa`ges.length; i++) {
     //   renderMessage(messages[i]);
     // }
-
+    setInterval(app.clearMessages, 6000);
+    setInterval(app.fetch, 6000);
+    
     
     
     $('form').on('submit', function (event) {
-      
+      var serializedArray = $('form').serializeArray();
       console.log('This was clicked');
-
-      console.log(this.data);
-      app.handleSubmit();
+      var message = {
+        username: serializedArray[0].value,
+        text: serializedArray[1].value,
+        roomname: serializedArray[2].value,
+      };
+      console.log(message);
+      // app.send($('form').serialize());
+      console.log(event);
+      app.send(message);
+      // app.handleSubmit();
+      event.preventDefault();
     });
 
     $('.chat').on('click', function (event) {
-      console.log('This was clicked');
+      // console.log('This was clicked');
 
       console.log(this.data);
       app.handleUsernameClick(event);
@@ -58,6 +68,7 @@
   };
 
   app.fetch = () => {
+   
     $.ajax({
       url: 'http://parse.sfm6.hackreactor.com/chatterbox/classes/messages',
       data: {order: '-createdAt'},
@@ -66,9 +77,22 @@
           return a.createdAt < b.createdAt ? -1 : 1;
         });
         console.log(data);
-        data.results.forEach(function(item) {
+        var roomnameList = [];
+        data.results.forEach(function(item, index) {
           app.renderMessage(item);
+          if (item.roomname && !roomnameList.includes(item.roomname)) {
+            console.log(item.roomname);
+            roomnameList.push(item.roomname);
+          }
         });
+        console.log(roomnameList);
+        $('#roomSelect').html('');
+        roomnameList.forEach(function(item) {
+          app.renderRoom(item);
+        });
+        
+
+        // data['results'].roo
         
       },
       error: function (data) {
@@ -93,13 +117,23 @@
         message.text = message.text.replace('<', '');
       }
     }
-
+    
+    // if ($('#friendList').includes(message.username)) {
+    //   $('#chats').prepend('\
+    //     <section class="chat">\
+    //       <div class="username" data-username="' + message.username + '"><b>' + message.username + ':</b> </div>\
+    //       ' + message.text + '\
+    //     </section>\
+    //   ');
+    // } else {
     $('#chats').prepend('\
       <section class="chat">\
         <div class="username" data-username="' + message.username + '">' + message.username + ': </div>\
         ' + message.text + '\
       </section>\
     ');
+    // }
+
 
     $('.username').on('click', function (event) {
       console.log('This was clicked');
@@ -115,8 +149,8 @@
 
   app.handleUsernameClick = (event) => {
     console.log(event);
-    console.log(this);
-    $('#friendList').append('<span>' + $(event).target.childNodes[0].data + '   |   </span>');
+    // console.log(event.target.innerHTML);
+    $('#friendList').append('<span>' + event.target.innerHTML + '   |   </span>');
 
   };
 
@@ -128,6 +162,9 @@
   $(document).ready(function() {
     app.init();
 
+    // setInterval(function() {
+    //   app.fetch();
+    // }, 3000);
 
     // var messages = app.fetch().data;
     // console.log(messages, "hey");
